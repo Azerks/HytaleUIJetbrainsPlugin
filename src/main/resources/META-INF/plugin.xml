@@ -47,6 +47,9 @@
         <psi.referenceContributor language="UI"
                                   implementation="org.jetbrains.plugins.template.ui.references.UiReferenceContributor"/>
 
+        <!-- Auto-closing brackets and quotes -->
+        <typedHandler implementation="org.jetbrains.plugins.template.ui.typing.UiTypedHandler"/>
+
         <!-- Sample Tool Window (can be removed if not needed) -->
         <toolWindow factoryClass="org.jetbrains.plugins.template.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
         <postStartupActivity implementation="org.jetbrains.plugins.template.startup.MyProjectActivity" />
