@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>org.jetbrains.plugins.template</id>
-    <name>IntelliJ Platform Plugin Template</name>
+    <name>UI File Support</name>
     <vendor>JetBrains</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -9,6 +9,29 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!-- UI File Type Support -->
+        <fileType name="UI File"
+                  implementationClass="org.jetbrains.plugins.template.ui.UiFileType"
+                  fieldName="INSTANCE"
+                  language="UI"
+                  extensions="ui"/>
+
+        <!-- Language Support -->
+        <lang.parserDefinition language="UI"
+                               implementationClass="org.jetbrains.plugins.template.ui.parser.UiParserDefinition"/>
+
+        <!-- Syntax Highlighting -->
+        <lang.syntaxHighlighterFactory language="UI"
+                                       implementationClass="org.jetbrains.plugins.template.ui.highlighting.UiSyntaxHighlighterFactory"/>
+
+        <!-- Color Settings -->
+        <colorSettingsPage implementation="org.jetbrains.plugins.template.ui.highlighting.UiColorSettingsPage"/>
+
+        <!-- Code Formatting -->
+        <lang.formatter language="UI"
+                        implementationClass="org.jetbrains.plugins.template.ui.formatting.UiFormattingModelBuilder"/>
+
+        <!-- Sample Tool Window (can be removed if not needed) -->
         <toolWindow factoryClass="org.jetbrains.plugins.template.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
         <postStartupActivity implementation="org.jetbrains.plugins.template.startup.MyProjectActivity" />
     </extensions>

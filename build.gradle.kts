@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.kover) // Gradle Kover Plugin
 }
 
+apply(plugin = "idea")
+
 group = providers.gradleProperty("pluginGroup").get()
 version = providers.gradleProperty("pluginVersion").get()
 
@@ -33,6 +35,9 @@ repositories {
 dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.opentest4j)
+
+    // JFlex for lexer generation
+    implementation("org.jetbrains.intellij.deps.jflex:jflex:1.9.1")
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
@@ -133,6 +138,30 @@ tasks {
 
     publishPlugin {
         dependsOn(patchChangelog)
+    }
+
+    // Generate lexer from JFlex file
+    val generateLexer = register("generateLexer", JavaExec::class) {
+        val flexFile = file("src/main/java/org/jetbrains/plugins/template/ui/lexer/Ui.flex")
+        val outputDir = file("src/main/java")
+
+        mainClass.set("jflex.Main")
+        classpath = configurations.runtimeClasspath.get()
+        args = listOf(
+            "-d", outputDir.absolutePath + "/org/jetbrains/plugins/template/ui/lexer",
+            flexFile.absolutePath
+        )
+
+        inputs.file(flexFile)
+        outputs.dir(outputDir)
+    }
+
+    compileJava {
+        dependsOn(generateLexer)
+    }
+
+    compileKotlin {
+        dependsOn(generateLexer)
     }
 }
 
