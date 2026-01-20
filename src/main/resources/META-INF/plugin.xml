@@ -35,6 +35,18 @@
         <codeStyleSettingsProvider implementation="org.jetbrains.plugins.template.ui.formatting.UiCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="org.jetbrains.plugins.template.ui.formatting.UiLanguageCodeStyleSettingsProvider"/>
 
+        <!-- Code Completion -->
+        <completion.contributor language="UI"
+                                implementationClass="org.jetbrains.plugins.template.ui.completion.UiCompletionContributor"/>
+
+        <!-- Error Annotations -->
+        <annotator language="UI"
+                   implementationClass="org.jetbrains.plugins.template.ui.annotator.UiAnnotator"/>
+
+        <!-- Reference Resolution (imports and variables) -->
+        <psi.referenceContributor language="UI"
+                                  implementation="org.jetbrains.plugins.template.ui.references.UiReferenceContributor"/>
+
         <!-- Sample Tool Window (can be removed if not needed) -->
         <toolWindow factoryClass="org.jetbrains.plugins.template.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
         <postStartupActivity implementation="org.jetbrains.plugins.template.startup.MyProjectActivity" />

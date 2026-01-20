@@ -3,7 +3,10 @@
 This IntelliJ Platform plugin provides comprehensive support for `.ui` configuration files, including:
 
 - **Syntax Highlighting**: Colors for keywords, properties, identifiers, strings, numbers, colors, and comments
-- **Code Formatting**: Automatic code formatting and indentation
+- **Code Formatting**: Automatic code formatting and indentation with proper nesting
+- **Autocompletion**: Smart completion for component types, properties, and values
+- **Error Highlighting**: Real-time validation of component types, properties, and syntax
+- **Import Resolution**: Navigation to imported files and variable references
 - **File Type Recognition**: Automatic recognition of `.ui` files
 
 ## Features
@@ -47,6 +50,48 @@ The formatter provides automatic code formatting when you use **Ctrl+Alt+L** (Wi
 **Customization:**
 Code style settings can be configured in:
 **Settings → Editor → Code Style → UI**
+
+### Autocompletion
+
+The plugin provides intelligent code completion:
+
+**Component Types:**
+- Press **Ctrl+Space** after `@` or `=` to see available component types
+- Supported: Group, Label, Button, TextButton, TextField, NumberField, DropdownBox, CheckBox, Sprite, Slider, etc.
+
+**Properties:**
+- Type property names inside component blocks for context-aware suggestions
+- Component-specific properties are suggested based on the component type
+- Common properties: Anchor, Style, Background, Padding, LayoutMode, Text, FlexWeight, Visible
+
+**Style Properties:**
+- Inside `Style: ( )` blocks: FontSize, TextColor, RenderBold, RenderUppercase, Alignment, Wrap, LetterSpacing
+
+**Anchor Properties:**
+- Inside `Anchor: ( )` blocks: Left, Right, Top, Bottom, Width, Height, Horizontal, Vertical, Full
+
+**Values:**
+- LayoutMode values: Top, Bottom, Left, Right, TopScrolling, BottomScrolling, etc.
+- Alignment values: Start, Center, End, Stretch
+- Boolean values: true, false
+
+### Error Highlighting
+
+Real-time error detection and validation:
+
+- **Unknown Component Types**: Warns when using undefined component types
+- **Invalid Properties**: Highlights properties that don't belong to a component type
+- **Missing Commas**: Detects missing commas between property declarations
+- **Unmatched Brackets**: Reports unmatched braces `{ }` and parentheses `( )`
+- **Syntax Errors**: Highlights various syntax issues
+
+### Import Resolution
+
+Navigate to definitions and imported files:
+
+- **File Imports**: Click on `"Common.ui"` to navigate to the imported file (Ctrl+Click or Cmd+Click)
+- **Variable References**: Click on `$C` to jump to its declaration
+- **Go to Definition**: Works for both imports and variable references
 
 ### UI Language Syntax
 
