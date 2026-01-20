@@ -24,11 +24,29 @@ The plugin recognizes and highlights:
 
 ### Code Formatting
 
-The formatter automatically:
-- Adds spaces around operators (`:`, `=`)
-- Formats braces with proper line breaks
-- Indents nested blocks
-- Handles comma-separated values
+The formatter provides automatic code formatting when you use **Ctrl+Alt+L** (Windows/Linux) or **Cmd+Option+L** (Mac):
+
+**Spacing Rules:**
+- Adds space around equals: `x = y`
+- Adds space after colon: `Key: Value`
+- Adds space after comma: `(x, y, z)`
+- No space before punctuation: `item,` `item;`
+- No space around dots: `$C.@DefaultStyle`
+- No space after special chars: `@name`, `$var`, `#id`
+
+**Indentation:**
+- Automatically indents content inside braces `{ }`
+- Maintains proper nesting levels
+- Aligns related properties
+
+**Line Breaks:**
+- New line after opening brace `{`
+- New line before closing brace `}`
+- New line after semicolon `;`
+
+**Customization:**
+Code style settings can be configured in:
+**Settings → Editor → Code Style → UI**
 
 ### UI Language Syntax
 

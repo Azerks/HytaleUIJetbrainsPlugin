@@ -28,4 +28,7 @@ public interface UiTypes {
     IElementType DOLLAR = new UiTokenType("DOLLAR");
     IElementType HASH = new UiTokenType("HASH");
     IElementType SPREAD = new UiTokenType("SPREAD");
+
+    // Composite element types for structure
+    IElementType BLOCK = new UiElementType("BLOCK");
 }

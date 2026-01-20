@@ -32,14 +32,41 @@ public class UiFormattingModelBuilder implements FormattingModelBuilder {
 
     private static SpacingBuilder createSpacingBuilder(CodeStyleSettings settings) {
         return new SpacingBuilder(settings, UiLanguage.INSTANCE)
+                // Equals spacing: x = y
                 .around(org.jetbrains.plugins.template.ui.psi.UiTypes.EQUALS).spaces(1)
-                .around(org.jetbrains.plugins.template.ui.psi.UiTypes.COLON).spaces(1)
+
+                // Colon spacing: Key: Value
+                .before(org.jetbrains.plugins.template.ui.psi.UiTypes.COLON).spaces(0)
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.COLON).spaces(1)
+
+                // Comma spacing: (x, y, z)
+                .before(org.jetbrains.plugins.template.ui.psi.UiTypes.COMMA).spaces(0)
                 .after(org.jetbrains.plugins.template.ui.psi.UiTypes.COMMA).spaces(1)
+
+                // Semicolon spacing: statement;
                 .before(org.jetbrains.plugins.template.ui.psi.UiTypes.SEMICOLON).spaces(0)
-                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.SEMICOLON).spaces(1)
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.SEMICOLON).lineBreakInCode()
+
+                // Dot spacing: $C.@DefaultStyle (no spaces)
+                .around(org.jetbrains.plugins.template.ui.psi.UiTypes.DOT).spaces(0)
+
+                // Braces: { and }
                 .before(org.jetbrains.plugins.template.ui.psi.UiTypes.LBRACE).spaces(1)
                 .after(org.jetbrains.plugins.template.ui.psi.UiTypes.LBRACE).lineBreakInCode()
-                .before(org.jetbrains.plugins.template.ui.psi.UiTypes.RBRACE).lineBreakInCode();
+                .before(org.jetbrains.plugins.template.ui.psi.UiTypes.RBRACE).lineBreakInCode()
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.RBRACE).lineBreakInCode()
+
+                // Parentheses: (content)
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.LPAREN).spaces(0)
+                .before(org.jetbrains.plugins.template.ui.psi.UiTypes.RPAREN).spaces(0)
+
+                // Special characters: no space after @, $, #
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.AT).spaces(0)
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.DOLLAR).spaces(0)
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.HASH).spaces(0)
+
+                // Spread operator: ...
+                .after(org.jetbrains.plugins.template.ui.psi.UiTypes.SPREAD).spaces(0);
     }
 
     @Nullable
