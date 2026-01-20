@@ -4,10 +4,14 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.template.ui.UiComponents;
 import org.jetbrains.plugins.template.ui.psi.UiTypes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class UiAnnotator implements Annotator {
 
@@ -21,6 +25,16 @@ public class UiAnnotator implements Annotator {
 
         // Validate component types
         if (elementType == UiTypes.IDENTIFIER) {
+            // Check if this is part of a variable first (preceded by $)
+            if (isPrecededByDollar(element)) {
+                // This is a variable reference or declaration
+                validateVariableReference(element, holder);
+                validateVariableDeclaration(element, holder);
+                // Skip other validations for variables
+                return;
+            }
+
+            // Not a variable, validate as component/property
             validateComponentType(element, holder);
             validateProperty(element, holder);
         }
@@ -158,5 +172,126 @@ public class UiAnnotator implements Annotator {
         }
 
         return null;
+    }
+
+    private void validateVariableReference(PsiElement element, AnnotationHolder holder) {
+        String text = element.getText();
+
+        // Check if this identifier is preceded by a DOLLAR sign (variable reference)
+        PsiElement prev = element.getPrevSibling();
+        while (prev != null && prev.getText().trim().isEmpty()) {
+            prev = prev.getPrevSibling();
+        }
+
+        if (prev != null && prev.getNode() != null && prev.getNode().getElementType() == UiTypes.DOLLAR) {
+            // Check what comes after the identifier
+            PsiElement next = element.getNextSibling();
+            while (next != null && next.getText().trim().isEmpty()) {
+                next = next.getNextSibling();
+            }
+
+            // If followed by EQUALS, this is a declaration, not a reference - skip validation
+            if (next != null && next.getNode() != null && next.getNode().getElementType() == UiTypes.EQUALS) {
+                return;
+            }
+
+            // Check if the variable is defined in the file
+            if (!isVariableDefined(element, text)) {
+                holder.newAnnotation(HighlightSeverity.ERROR,
+                        "Undefined variable: $" + text)
+                        .range(element)
+                        .create();
+            }
+        }
+    }
+
+    private boolean isVariableDefined(PsiElement element, String variableName) {
+        PsiFile file = element.getContainingFile();
+        if (file == null) {
+            return false;
+        }
+
+        // Collect all defined variables in the file
+        Set<String> definedVariables = new HashSet<>();
+        collectDefinedVariables(file, definedVariables);
+
+        return definedVariables.contains(variableName);
+    }
+
+    private void collectDefinedVariables(PsiElement element, Set<String> variables) {
+        if (element.getNode() != null && element.getNode().getElementType() == UiTypes.IDENTIFIER) {
+            // Check if this is a variable definition ($C = "...")
+            PsiElement prev = element.getPrevSibling();
+            while (prev != null && prev.getText().trim().isEmpty()) {
+                prev = prev.getPrevSibling();
+            }
+
+            if (prev != null && prev.getNode() != null && prev.getNode().getElementType() == UiTypes.DOLLAR) {
+                // Check if followed by EQUALS
+                PsiElement next = element.getNextSibling();
+                while (next != null && next.getText().trim().isEmpty()) {
+                    next = next.getNextSibling();
+                }
+
+                if (next != null && next.getNode() != null && next.getNode().getElementType() == UiTypes.EQUALS) {
+                    variables.add(element.getText());
+                }
+            }
+        }
+
+        // Recursively check children
+        for (PsiElement child : element.getChildren()) {
+            collectDefinedVariables(child, variables);
+        }
+    }
+
+    private void validateVariableDeclaration(PsiElement element, AnnotationHolder holder) {
+        String text = element.getText();
+
+        // Check if this is a variable declaration ($C = "...")
+        PsiElement prev = element.getPrevSibling();
+        while (prev != null && prev.getText().trim().isEmpty()) {
+            prev = prev.getPrevSibling();
+        }
+
+        if (prev != null && prev.getNode() != null && prev.getNode().getElementType() == UiTypes.DOLLAR) {
+            // Check if followed by EQUALS (this is a declaration)
+            PsiElement next = element.getNextSibling();
+            while (next != null && next.getText().trim().isEmpty()) {
+                next = next.getNextSibling();
+            }
+
+            if (next != null && next.getNode() != null && next.getNode().getElementType() == UiTypes.EQUALS) {
+                // This is a variable declaration
+                // Find the value (STRING after EQUALS)
+                PsiElement valueElement = next.getNextSibling();
+                while (valueElement != null && valueElement.getText().trim().isEmpty()) {
+                    valueElement = valueElement.getNextSibling();
+                }
+
+                if (valueElement != null && valueElement.getNode() != null &&
+                    valueElement.getNode().getElementType() == UiTypes.STRING) {
+                    String value = valueElement.getText();
+                    // Remove quotes
+                    value = value.substring(1, value.length() - 1);
+
+                    // Check if the value ends with .ui extension
+                    if (!value.endsWith(".ui")) {
+                        holder.newAnnotation(HighlightSeverity.ERROR,
+                                "Variable must be declared with a .ui file (e.g., \"Common.ui\")")
+                                .range(valueElement)
+                                .create();
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isPrecededByDollar(PsiElement element) {
+        PsiElement prev = element.getPrevSibling();
+        while (prev != null && prev.getText().trim().isEmpty()) {
+            prev = prev.getPrevSibling();
+        }
+        return prev != null && prev.getNode() != null && prev.getNode().getElementType() == UiTypes.DOLLAR;
     }
 }

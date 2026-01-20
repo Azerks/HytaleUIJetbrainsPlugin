@@ -151,9 +151,8 @@ public class UiCompletionContributor extends CompletionContributor {
             while (beforeColon != null && beforeColon.getText().trim().isEmpty()) {
                 beforeColon = beforeColon.getPrevSibling();
             }
-            System.out.println(beforeColon.getNode().getElementType());
 
-            if (beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.IDENTIFIER && beforeColon.getText().equals("Group")) {
+            if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.IDENTIFIER && beforeColon.getText().equals("Group")) {
                 return position.getParent().getNode().getElementType() == UiTypes.COMPONENT_BODY;
             }
         }
