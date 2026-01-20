@@ -41,6 +41,7 @@ public class UiBlock extends AbstractBlock {
             }
             child = child.getTreeNext();
         }
+        System.out.println(blocks);
         return blocks;
     }
 
@@ -52,8 +53,8 @@ public class UiBlock extends AbstractBlock {
         String parentTypeStr = (parent != null) ? parent.getElementType().toString() : "null";
 
         if (elementType == UiTypes.LBRACE || elementType == UiTypes.RBRACE ||
-            elementType == UiTypes.LPAREN || elementType == UiTypes.RPAREN ||
-            elementType == UiTypes.LBRACKET || elementType == UiTypes.RBRACKET) {
+                elementType == UiTypes.LPAREN || elementType == UiTypes.RPAREN ||
+                elementType == UiTypes.LBRACKET || elementType == UiTypes.RBRACKET) {
             return Indent.getNoneIndent();
         }
 
@@ -64,24 +65,12 @@ public class UiBlock extends AbstractBlock {
         IElementType parentType = parent.getElementType();
 
         // Block containers: if nested inside another block container, inherit its indent
-        if (elementType == UiTypes.COMPONENT_BODY ||
-            elementType == UiTypes.PROPERTY_VALUE ||
-            elementType == UiTypes.ARRAY_LITERAL) {
-
-            // If this container is inside another container, it should be indented
-            if (parentType == UiTypes.COMPONENT_BODY ||
-                parentType == UiTypes.PROPERTY_VALUE ||
-                parentType == UiTypes.ARRAY_LITERAL) {
-                return Indent.getNormalIndent();
-            }
-
-            return Indent.getNoneIndent();
-        }
+        // If this container is inside another container, it should be indented
 
         // Children of block containers get indented
         if (parentType == UiTypes.COMPONENT_BODY ||
-            parentType == UiTypes.PROPERTY_VALUE ||
-            parentType == UiTypes.ARRAY_LITERAL) {
+                parentType == UiTypes.PROPERTY_VALUE ||
+                parentType == UiTypes.ARRAY_LITERAL) {
             return Indent.getNormalIndent();
         }
 
@@ -102,16 +91,39 @@ public class UiBlock extends AbstractBlock {
         System.out.println("getChildAttributes called on: " + elementType + " at index: " + newChildIndex);
 
         // Inside block containers, always indent new children
+        System.out.println(elementType);
         if (elementType == UiTypes.COMPONENT_BODY ||
-            elementType == UiTypes.PROPERTY_VALUE ||
-            elementType == UiTypes.ARRAY_LITERAL) {
-            System.out.println("  -> Returning INDENT");
-            return new ChildAttributes(Indent.getNormalIndent(), null);
+                elementType == UiTypes.PROPERTY_VALUE ||
+                elementType == UiTypes.ARRAY_LITERAL) {
+            return new ChildAttributes(Indent.getNormalIndent(true), Alignment.createAlignment(true));
         }
 
+        return new ChildAttributes(Indent.getNormalIndent(true), Alignment.createAlignment(true));
         // Default: no indent
-        System.out.println("  -> Returning NO INDENT");
-        return new ChildAttributes(Indent.getNoneIndent(), null);
+//        int i = computeDepth();
+//        return new ChildAttributes(Indent.getSpaceIndent(i * 4), null);
+    }
+
+    public int computeDepth() {
+
+        int depth = 0;
+        if (myNode.getStartOffsetInParent() == -1 || myNode.getElementType() == UiTypes.COMPONENT_BODY || myNode.getElementType() == UiTypes.PROPERTY_VALUE) {
+            depth++;
+        }
+
+        ASTNode node = myNode.getFirstChildNode();
+
+
+        while (node != null) {
+            if (node.getElementType() == UiTypes.COMPONENT_BODY || node.getElementType() == UiTypes.PROPERTY_VALUE) {
+                depth++;
+            }
+            if (myNode.getStartOffsetInParent() <= node.getStartOffsetInParent()) {
+                break;
+            }
+            node = node.getTreeNext();
+        }
+        return depth;
     }
 
     @Override

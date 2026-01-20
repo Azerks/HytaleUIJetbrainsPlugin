@@ -103,28 +103,16 @@ public class UiParser implements PsiParser {
             } else if (tokenType == UiTypes.LBRACE) {
                 parseComponentBody(builder);
             } else if (tokenType == UiTypes.RBRACE) {
-                if (expectedClosing == UiTypes.RBRACE) {
-                    builder.advanceLexer();
-                    return true;
-                }
                 // Wrong type of closing bracket
                 return false;
             } else if (tokenType == UiTypes.LPAREN) {
                 parsePropertyValue(builder);
             } else if (tokenType == UiTypes.RPAREN) {
-                if (expectedClosing == UiTypes.RPAREN) {
-                    builder.advanceLexer();
-                    return true;
-                }
                 // Wrong type of closing bracket
                 return false;
             } else if (tokenType == UiTypes.LBRACKET) {
                 parseArrayLiteral(builder);
             } else if (tokenType == UiTypes.RBRACKET) {
-                if (expectedClosing == UiTypes.RBRACKET) {
-                    builder.advanceLexer();
-                    return true;
-                }
                 // Wrong type of closing bracket
                 return false;
             } else {
