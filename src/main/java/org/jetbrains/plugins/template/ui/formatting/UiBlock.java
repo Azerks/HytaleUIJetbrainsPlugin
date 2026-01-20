@@ -15,18 +15,11 @@ import java.util.List;
 public class UiBlock extends AbstractBlock {
 
     private final SpacingBuilder spacingBuilder;
-    private final int indentLevel;
 
     public UiBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment,
                    SpacingBuilder spacingBuilder) {
-        this(node, wrap, alignment, spacingBuilder, 0);
-    }
-
-    public UiBlock(@NotNull ASTNode node, @Nullable Wrap wrap, @Nullable Alignment alignment,
-                   SpacingBuilder spacingBuilder, int indentLevel) {
         super(node, wrap, alignment);
         this.spacingBuilder = spacingBuilder;
-        this.indentLevel = indentLevel;
     }
 
     @Override
@@ -37,13 +30,12 @@ public class UiBlock extends AbstractBlock {
         while (child != null) {
             IElementType childType = child.getElementType();
 
-            if (childType != TokenType.WHITE_SPACE && childType != null) {
+            if (childType != TokenType.WHITE_SPACE) {
                 Block block = new UiBlock(
                         child,
                         Wrap.createWrap(WrapType.NONE, false),
                         null,
-                        spacingBuilder,
-                        indentLevel
+                        spacingBuilder
                 );
                 blocks.add(block);
             }
@@ -57,23 +49,50 @@ public class UiBlock extends AbstractBlock {
         IElementType elementType = myNode.getElementType();
         ASTNode parent = myNode.getTreeParent();
 
-        // No indent for braces and parentheses themselves
+        String parentTypeStr = (parent != null) ? parent.getElementType().toString() : "null";
+        System.out.println("getIndent: " + elementType + " (parent: " + parentTypeStr + ")");
+
+        // Brackets themselves don't get indented
         if (elementType == UiTypes.LBRACE || elementType == UiTypes.RBRACE ||
-            elementType == UiTypes.LPAREN || elementType == UiTypes.RPAREN) {
+            elementType == UiTypes.LPAREN || elementType == UiTypes.RPAREN ||
+            elementType == UiTypes.LBRACKET || elementType == UiTypes.RBRACKET) {
+            System.out.println("  -> NONE (bracket)");
             return Indent.getNoneIndent();
         }
 
-        // If parent is null, no indent (root level)
         if (parent == null) {
+            System.out.println("  -> NONE (no parent)");
             return Indent.getNoneIndent();
         }
 
-        // If parent is a BLOCK element (content between braces or parentheses), we should be indented
         IElementType parentType = parent.getElementType();
-        if (parentType == UiTypes.BLOCK) {
+
+        // Block containers: if nested inside another block container, inherit its indent
+        if (elementType == UiTypes.COMPONENT_BODY ||
+            elementType == UiTypes.PROPERTY_VALUE ||
+            elementType == UiTypes.ARRAY_LITERAL) {
+
+            // If this container is inside another container, it should be indented
+            if (parentType == UiTypes.COMPONENT_BODY ||
+                parentType == UiTypes.PROPERTY_VALUE ||
+                parentType == UiTypes.ARRAY_LITERAL) {
+                System.out.println("  -> NORMAL INDENT (nested container)!");
+                return Indent.getNormalIndent();
+            }
+
+            System.out.println("  -> NONE (top-level container)");
+            return Indent.getNoneIndent();
+        }
+
+        // Children of block containers get indented
+        if (parentType == UiTypes.COMPONENT_BODY ||
+            parentType == UiTypes.PROPERTY_VALUE ||
+            parentType == UiTypes.ARRAY_LITERAL) {
+            System.out.println("  -> NORMAL INDENT!");
             return Indent.getNormalIndent();
         }
 
+        System.out.println("  -> NONE (default)");
         return Indent.getNoneIndent();
     }
 
@@ -81,6 +100,26 @@ public class UiBlock extends AbstractBlock {
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
         return spacingBuilder.getSpacing(this, child1, child2);
+    }
+
+    @NotNull
+    @Override
+    public ChildAttributes getChildAttributes(int newChildIndex) {
+        IElementType elementType = myNode.getElementType();
+
+        System.out.println("getChildAttributes called on: " + elementType + " at index: " + newChildIndex);
+
+        // Inside block containers, always indent new children
+        if (elementType == UiTypes.COMPONENT_BODY ||
+            elementType == UiTypes.PROPERTY_VALUE ||
+            elementType == UiTypes.ARRAY_LITERAL) {
+            System.out.println("  -> Returning INDENT");
+            return new ChildAttributes(Indent.getNormalIndent(), null);
+        }
+
+        // Default: no indent
+        System.out.println("  -> Returning NO INDENT");
+        return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
     @Override

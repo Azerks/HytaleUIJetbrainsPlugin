@@ -15,6 +15,9 @@ public class UiFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
     @Override
     public FormattingModel createModel(@NotNull FormattingContext formattingContext) {
+        System.out.println("====== UiFormattingModelBuilder.createModel() called ======");
+        System.out.println("Node type: " + formattingContext.getNode().getElementType());
+
         CodeStyleSettings codeStyleSettings = formattingContext.getCodeStyleSettings();
         SpacingBuilder spacingBuilder = createSpacingBuilder(codeStyleSettings);
         UiBlock block = new UiBlock(

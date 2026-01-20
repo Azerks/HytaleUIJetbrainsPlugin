@@ -24,11 +24,16 @@ public interface UiTypes {
     IElementType RBRACE = new UiTokenType("RBRACE");
     IElementType LPAREN = new UiTokenType("LPAREN");
     IElementType RPAREN = new UiTokenType("RPAREN");
+    IElementType LBRACKET = new UiTokenType("LBRACKET");
+    IElementType RBRACKET = new UiTokenType("RBRACKET");
     IElementType AT = new UiTokenType("AT");
     IElementType DOLLAR = new UiTokenType("DOLLAR");
     IElementType HASH = new UiTokenType("HASH");
     IElementType SPREAD = new UiTokenType("SPREAD");
 
-    // Composite element types for structure
-    IElementType BLOCK = new UiElementType("BLOCK");
+    // Composite element types - these preserve context for indentation and autocompletion
+    // Each block type knows what kind of content it contains
+    IElementType COMPONENT_BODY = new UiElementType("COMPONENT_BODY");      // Content inside { } for components like Group, Label
+    IElementType PROPERTY_VALUE = new UiElementType("PROPERTY_VALUE");      // Content inside ( ) for property values
+    IElementType ARRAY_LITERAL = new UiElementType("ARRAY_LITERAL");        // Content inside [ ] for arrays
 }

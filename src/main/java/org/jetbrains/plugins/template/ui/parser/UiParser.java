@@ -14,57 +14,86 @@ public class UiParser implements PsiParser {
     public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
         PsiBuilder.Marker rootMarker = builder.mark();
 
-        parseContent(builder, 0);
+        parseContent(builder);
 
         rootMarker.done(root);
         return builder.getTreeBuilt();
     }
 
-    private void parseContent(PsiBuilder builder, int level) {
+    private void parseContent(PsiBuilder builder) {
         while (!builder.eof()) {
             IElementType tokenType = builder.getTokenType();
 
             if (tokenType == UiTypes.LBRACE) {
-                PsiBuilder.Marker errorMarker = builder.mark(); // Mark opening position
-                builder.advanceLexer(); // consume {
-                PsiBuilder.Marker blockMarker = builder.mark();
-                boolean matched = parseBlock(builder, UiTypes.RBRACE);
-                blockMarker.done(UiTypes.BLOCK);
-
-                if (!matched) {
-                    errorMarker.error("Unclosed brace '{'");
-                } else {
-                    errorMarker.drop();
-                }
+                parseComponentBody(builder);
             } else if (tokenType == UiTypes.RBRACE) {
                 // Unmatched closing brace
                 PsiBuilder.Marker errorMarker = builder.mark();
                 builder.advanceLexer();
                 errorMarker.error("Unmatched closing brace '}'");
             } else if (tokenType == UiTypes.LPAREN) {
-                PsiBuilder.Marker errorMarker = builder.mark(); // Mark opening position
-                builder.advanceLexer(); // consume (
-                PsiBuilder.Marker blockMarker = builder.mark();
-                boolean matched = parseBlock(builder, UiTypes.RPAREN);
-                blockMarker.done(UiTypes.BLOCK);
-
-                if (!matched) {
-                    errorMarker.error("Unclosed parenthesis '('");
-                } else {
-                    errorMarker.drop();
-                }
+                parsePropertyValue(builder);
             } else if (tokenType == UiTypes.RPAREN) {
                 // Unmatched closing parenthesis
                 PsiBuilder.Marker errorMarker = builder.mark();
                 builder.advanceLexer();
                 errorMarker.error("Unmatched closing parenthesis ')'");
+            } else if (tokenType == UiTypes.LBRACKET) {
+                parseArrayLiteral(builder);
+            } else if (tokenType == UiTypes.RBRACKET) {
+                // Unmatched closing bracket
+                PsiBuilder.Marker errorMarker = builder.mark();
+                builder.advanceLexer();
+                errorMarker.error("Unmatched closing bracket ']'");
             } else {
                 builder.advanceLexer();
             }
         }
     }
 
-    private boolean parseBlock(PsiBuilder builder, IElementType expectedClosing) {
+    private void parseComponentBody(PsiBuilder builder) {
+        PsiBuilder.Marker errorMarker = builder.mark();
+        builder.advanceLexer(); // consume {
+        PsiBuilder.Marker bodyMarker = builder.mark();
+        boolean matched = parseBlockContent(builder, UiTypes.RBRACE);
+        bodyMarker.done(UiTypes.COMPONENT_BODY);
+
+        if (!matched) {
+            errorMarker.error("Unclosed brace '{'");
+        } else {
+            errorMarker.drop();
+        }
+    }
+
+    private void parsePropertyValue(PsiBuilder builder) {
+        PsiBuilder.Marker errorMarker = builder.mark();
+        builder.advanceLexer(); // consume (
+        PsiBuilder.Marker valueMarker = builder.mark();
+        boolean matched = parseBlockContent(builder, UiTypes.RPAREN);
+        valueMarker.done(UiTypes.PROPERTY_VALUE);
+
+        if (!matched) {
+            errorMarker.error("Unclosed parenthesis '('");
+        } else {
+            errorMarker.drop();
+        }
+    }
+
+    private void parseArrayLiteral(PsiBuilder builder) {
+        PsiBuilder.Marker errorMarker = builder.mark();
+        builder.advanceLexer(); // consume [
+        PsiBuilder.Marker arrayMarker = builder.mark();
+        boolean matched = parseBlockContent(builder, UiTypes.RBRACKET);
+        arrayMarker.done(UiTypes.ARRAY_LITERAL);
+
+        if (!matched) {
+            errorMarker.error("Unclosed bracket '['");
+        } else {
+            errorMarker.drop();
+        }
+    }
+
+    private boolean parseBlockContent(PsiBuilder builder, IElementType expectedClosing) {
         while (!builder.eof()) {
             IElementType tokenType = builder.getTokenType();
 
@@ -72,42 +101,31 @@ public class UiParser implements PsiParser {
                 builder.advanceLexer(); // consume closing bracket
                 return true; // Found matching closing bracket
             } else if (tokenType == UiTypes.LBRACE) {
-                PsiBuilder.Marker errorMarker = builder.mark();
-                builder.advanceLexer();
-                PsiBuilder.Marker blockMarker = builder.mark();
-                boolean matched = parseBlock(builder, UiTypes.RBRACE);
-                blockMarker.done(UiTypes.BLOCK);
-
-                if (!matched) {
-                    errorMarker.error("Unclosed brace '{'");
-                } else {
-                    errorMarker.drop();
-                }
+                parseComponentBody(builder);
             } else if (tokenType == UiTypes.RBRACE) {
                 if (expectedClosing == UiTypes.RBRACE) {
                     builder.advanceLexer();
                     return true;
                 }
-                // Wrong type of closing bracket, exit without consuming
+                // Wrong type of closing bracket
                 return false;
             } else if (tokenType == UiTypes.LPAREN) {
-                PsiBuilder.Marker errorMarker = builder.mark();
-                builder.advanceLexer();
-                PsiBuilder.Marker blockMarker = builder.mark();
-                boolean matched = parseBlock(builder, UiTypes.RPAREN);
-                blockMarker.done(UiTypes.BLOCK);
-
-                if (!matched) {
-                    errorMarker.error("Unclosed parenthesis '('");
-                } else {
-                    errorMarker.drop();
-                }
+                parsePropertyValue(builder);
             } else if (tokenType == UiTypes.RPAREN) {
                 if (expectedClosing == UiTypes.RPAREN) {
                     builder.advanceLexer();
                     return true;
                 }
-                // Wrong type of closing bracket, exit without consuming
+                // Wrong type of closing bracket
+                return false;
+            } else if (tokenType == UiTypes.LBRACKET) {
+                parseArrayLiteral(builder);
+            } else if (tokenType == UiTypes.RBRACKET) {
+                if (expectedClosing == UiTypes.RBRACKET) {
+                    builder.advanceLexer();
+                    return true;
+                }
+                // Wrong type of closing bracket
                 return false;
             } else {
                 builder.advanceLexer();

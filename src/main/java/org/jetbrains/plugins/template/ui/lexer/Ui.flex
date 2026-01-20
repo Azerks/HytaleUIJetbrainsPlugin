@@ -77,6 +77,8 @@ STRING=\"([^\"\\\r\n]|\\.)*\"
     "}"                         { return UiTypes.RBRACE; }
     "("                         { return UiTypes.LPAREN; }
     ")"                         { return UiTypes.RPAREN; }
+    "["                         { return UiTypes.LBRACKET; }
+    "]"                         { return UiTypes.RBRACKET; }
     "@"                         { return UiTypes.AT; }
     "$"                         { return UiTypes.DOLLAR; }
     "#"                         { return UiTypes.HASH; }

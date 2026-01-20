@@ -116,10 +116,10 @@ public class UiCompletionContributor extends CompletionContributor {
     }
 
     private boolean shouldProvidePropertyCompletion(PsiElement position) {
-        // Check if we're inside a block (between braces)
+        // Check if we're inside a component body (between braces)
         PsiElement parent = position.getParent();
         if (parent != null && parent.getNode() != null) {
-            return parent.getNode().getElementType() == UiTypes.BLOCK;
+            return parent.getNode().getElementType() == UiTypes.COMPONENT_BODY;
         }
         return false;
     }
