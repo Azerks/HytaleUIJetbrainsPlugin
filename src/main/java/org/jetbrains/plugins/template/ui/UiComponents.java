@@ -8,8 +8,8 @@ public class UiComponents {
     public static final Set<String> COMPONENT_TYPES = Set.of(
             "Group", "Label", "Button", "TextButton", "TextField", "NumberField",
             "DropdownBox", "CheckBox", "Sprite", "BackButton", "CompactTextField",
-            "Slider", "ColorPicker", "ColorPickerDropdownBox", "FileDropdownBox",
-            "TabNavigation"
+            "Slider", "FloatSlider", "ColorPicker", "ColorPickerDropdownBox",
+            "FileDropdownBox", "TabNavigation", "ItemGrid"
     );
 
     // Common properties for all components
@@ -52,7 +52,7 @@ public class UiComponents {
         // NumberField properties
         COMPONENT_PROPERTIES.put("NumberField", Set.of(
                 "Anchor", "Style", "PlaceholderStyle", "PlaceholderText",
-                "Background", "Padding", "Visible"
+                "Background", "Padding", "Visible", "Format", "Value"
         ));
 
         // DropdownBox properties
@@ -72,7 +72,12 @@ public class UiComponents {
 
         // Slider properties
         COMPONENT_PROPERTIES.put("Slider", Set.of(
-                "Anchor", "Style", "MinValue", "MaxValue", "Value", "Visible"
+                "Anchor", "Style", "Min", "Max", "Value", "Step", "Visible"
+        ));
+
+        // FloatSlider properties
+        COMPONENT_PROPERTIES.put("FloatSlider", Set.of(
+                "Anchor", "Style", "Min", "Max", "Value", "Step", "Visible"
         ));
 
         // CompactTextField properties
@@ -84,6 +89,11 @@ public class UiComponents {
         // BackButton properties
         COMPONENT_PROPERTIES.put("BackButton", Set.of(
                 "Anchor", "Style", "Visible"
+        ));
+
+        // ItemGrid properties
+        COMPONENT_PROPERTIES.put("ItemGrid", Set.of(
+                "Anchor", "Style", "SlotsPerRow", "Visible"
         ));
     }
 
@@ -115,6 +125,67 @@ public class UiComponents {
             "Start", "Center", "End", "Stretch"
     );
 
+    // Padding properties (used inside Padding(...))
+    public static final Set<String> PADDING_PROPERTIES = Set.of(
+            "Top", "Bottom", "Left", "Right", "Horizontal", "Vertical", "Full"
+    );
+
+    // Style function types (functions that return styles)
+    public static final Set<String> STYLE_FUNCTIONS = Set.of(
+            "PatchStyle", "LabelStyle", "ButtonStyle", "TextButtonStyle",
+            "DropdownBoxStyle", "CheckBoxStyle", "SliderStyle", "ColorPickerStyle",
+            "ColorPickerDropdownBoxStyle", "FileDropdownBoxStyle", "InputFieldStyle",
+            "PopupMenuLayerStyle", "TabStateStyle", "TabNavigationStyle",
+            "ScrollbarStyle", "TextTooltipStyle"
+    );
+
+    // Common function names
+    public static final Set<String> FUNCTION_TYPES = Set.of(
+            "PatchStyle", "LabelStyle", "ButtonStyle", "TextButtonStyle",
+            "DropdownBoxStyle", "CheckBoxStyle", "SliderStyle", "Anchor",
+            "Padding", "ColorPickerStyle", "ColorPickerDropdownBoxStyle",
+            "FileDropdownBoxStyle", "InputFieldStyle", "PopupMenuLayerStyle",
+            "TabStateStyle", "TabNavigationStyle", "ScrollbarStyle",
+            "TextTooltipStyle"
+    );
+
+    // PatchStyle parameters
+    public static final Set<String> PATCH_STYLE_PARAMS = Set.of(
+            "TexturePath", "Border", "HorizontalBorder", "VerticalBorder", "Color"
+    );
+
+    // LabelStyle parameters
+    public static final Set<String> LABEL_STYLE_PARAMS = Set.of(
+            "FontSize", "TextColor", "RenderBold", "RenderUppercase",
+            "HorizontalAlignment", "VerticalAlignment", "Alignment",
+            "Wrap", "LetterSpacing", "FontName"
+    );
+
+    // ButtonStyle/TextButtonStyle state names
+    public static final Set<String> BUTTON_STATES = Set.of(
+            "Default", "Hovered", "Pressed", "Disabled"
+    );
+
+    // Properties for button state definitions
+    public static final Set<String> BUTTON_STATE_PROPERTIES = Set.of(
+            "Background", "LabelStyle"
+    );
+
+    // Decoration properties (for TextField)
+    public static final Set<String> DECORATION_PROPERTIES = Set.of(
+            "Default", "Icon", "ClearButtonStyle"
+    );
+
+    // NumberField Format properties
+    public static final Set<String> NUMBER_FORMAT_PROPERTIES = Set.of(
+            "MaxDecimalPlaces", "Step", "MinValue", "MaxValue"
+    );
+
+    // ItemGrid Style properties
+    public static final Set<String> ITEM_GRID_STYLE_PROPERTIES = Set.of(
+            "SlotSize", "SlotIconSize", "SlotSpacing", "SlotBackground"
+    );
+
     public static Set<String> getPropertiesForComponent(String componentType) {
         return COMPONENT_PROPERTIES.getOrDefault(componentType, COMMON_PROPERTIES);
     }
@@ -126,5 +197,13 @@ public class UiComponents {
     public static boolean isValidProperty(String componentType, String property) {
         Set<String> properties = getPropertiesForComponent(componentType);
         return properties.contains(property) || COMMON_PROPERTIES.contains(property);
+    }
+
+    public static boolean isStyleFunction(String name) {
+        return STYLE_FUNCTIONS.contains(name);
+    }
+
+    public static boolean isFunctionType(String name) {
+        return FUNCTION_TYPES.contains(name);
     }
 }

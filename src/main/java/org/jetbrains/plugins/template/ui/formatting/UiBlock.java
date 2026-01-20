@@ -50,18 +50,14 @@ public class UiBlock extends AbstractBlock {
         ASTNode parent = myNode.getTreeParent();
 
         String parentTypeStr = (parent != null) ? parent.getElementType().toString() : "null";
-        System.out.println("getIndent: " + elementType + " (parent: " + parentTypeStr + ")");
 
-        // Brackets themselves don't get indented
         if (elementType == UiTypes.LBRACE || elementType == UiTypes.RBRACE ||
             elementType == UiTypes.LPAREN || elementType == UiTypes.RPAREN ||
             elementType == UiTypes.LBRACKET || elementType == UiTypes.RBRACKET) {
-            System.out.println("  -> NONE (bracket)");
             return Indent.getNoneIndent();
         }
 
         if (parent == null) {
-            System.out.println("  -> NONE (no parent)");
             return Indent.getNoneIndent();
         }
 
@@ -76,11 +72,9 @@ public class UiBlock extends AbstractBlock {
             if (parentType == UiTypes.COMPONENT_BODY ||
                 parentType == UiTypes.PROPERTY_VALUE ||
                 parentType == UiTypes.ARRAY_LITERAL) {
-                System.out.println("  -> NORMAL INDENT (nested container)!");
                 return Indent.getNormalIndent();
             }
 
-            System.out.println("  -> NONE (top-level container)");
             return Indent.getNoneIndent();
         }
 
@@ -88,11 +82,9 @@ public class UiBlock extends AbstractBlock {
         if (parentType == UiTypes.COMPONENT_BODY ||
             parentType == UiTypes.PROPERTY_VALUE ||
             parentType == UiTypes.ARRAY_LITERAL) {
-            System.out.println("  -> NORMAL INDENT!");
             return Indent.getNormalIndent();
         }
 
-        System.out.println("  -> NONE (default)");
         return Indent.getNoneIndent();
     }
 
