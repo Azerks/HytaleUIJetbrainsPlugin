@@ -54,6 +54,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
+      # Make gradlew executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       # Build plugin
       - name: Build plugin
         run: ./gradlew buildPlugin
@@ -106,6 +110,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: true
+
+      # Make gradlew executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       # Run tests
       - name: Run Tests
@@ -195,6 +203,10 @@ jobs:
         with:
           cache-read-only: true
 
+      # Make gradlew executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       # Run Verify Plugin task and IntelliJ Plugin Verifier tool
       - name: Run Plugin Verification tasks
         run: ./gradlew verifyPlugin
@@ -221,6 +233,10 @@ jobs:
       # Check out the current repository
       - name: Fetch Sources
         uses: actions/checkout@v5
+
+      # Make gradlew executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       # Remove old release drafts by using the curl request for the available releases with a draft flag
       - name: Remove Old Release Drafts
