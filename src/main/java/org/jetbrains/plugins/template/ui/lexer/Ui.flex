@@ -74,6 +74,8 @@ STRING=\"([^\"\\\r\n]|\\.)*\"
     "TextColor"                 { return UiTypes.PROPERTY; }
     "RenderBold"                { return UiTypes.PROPERTY; }
     "VerticalAlignment"         { return UiTypes.PROPERTY; }
+    "HorizontalAlignment"       { return UiTypes.PROPERTY; }
+    "Alignment"                 { return UiTypes.PROPERTY; }
     "Wrap"                      { return UiTypes.PROPERTY; }
 
     // Layout modes
