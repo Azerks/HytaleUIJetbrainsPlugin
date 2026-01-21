@@ -91,17 +91,37 @@ public class UiBlock extends AbstractBlock {
         System.out.println("getChildAttributes called on: " + elementType + " at index: " + newChildIndex);
 
         // Inside block containers, always indent new children
-        System.out.println(elementType);
         if (elementType == UiTypes.COMPONENT_BODY ||
                 elementType == UiTypes.PROPERTY_VALUE ||
                 elementType == UiTypes.ARRAY_LITERAL) {
-            return new ChildAttributes(Indent.getNormalIndent(true), Alignment.createAlignment(true));
+            System.out.println("Inside block container - returning normal indent");
+            return new ChildAttributes(Indent.getNormalIndent(), null);
         }
 
-        return new ChildAttributes(Indent.getNormalIndent(true), Alignment.createAlignment(true));
-        // Default: no indent
-//        int i = computeDepth();
-//        return new ChildAttributes(Indent.getSpaceIndent(i * 4), null);
+        // Check if the previous child is an opening brace/paren/bracket
+        // This handles the case when pressing Enter right after { ( or [
+        List<Block> subBlocks = getSubBlocks();
+        if (newChildIndex > 0 && newChildIndex <= subBlocks.size()) {
+            Block previousBlock = subBlocks.get(newChildIndex - 1);
+            if (previousBlock instanceof UiBlock) {
+                UiBlock prevUiBlock = (UiBlock) previousBlock;
+                IElementType prevType = prevUiBlock.myNode.getElementType();
+                System.out.println("Previous block type: " + prevType);
+
+                // After opening braces, we should look for the COMPONENT_BODY/PROPERTY_VALUE/ARRAY_LITERAL
+                // that was created by the parser
+                if (prevType == UiTypes.COMPONENT_BODY ||
+                    prevType == UiTypes.PROPERTY_VALUE ||
+                    prevType == UiTypes.ARRAY_LITERAL) {
+                    System.out.println("Previous block is a container - returning normal indent");
+                    return new ChildAttributes(Indent.getNormalIndent(), null);
+                }
+            }
+        }
+
+        System.out.println("Default case - returning none indent");
+        // Default: no indent for other cases
+        return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
     public int computeDepth() {

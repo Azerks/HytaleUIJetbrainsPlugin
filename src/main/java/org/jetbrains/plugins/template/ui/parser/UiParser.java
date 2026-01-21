@@ -52,44 +52,38 @@ public class UiParser implements PsiParser {
     }
 
     private void parseComponentBody(PsiBuilder builder) {
-        PsiBuilder.Marker errorMarker = builder.mark();
-        builder.advanceLexer(); // consume {
         PsiBuilder.Marker bodyMarker = builder.mark();
+        builder.advanceLexer(); // consume {
         boolean matched = parseBlockContent(builder, UiTypes.RBRACE);
-        bodyMarker.done(UiTypes.COMPONENT_BODY);
 
         if (!matched) {
-            errorMarker.error("Unclosed brace '{'");
+            bodyMarker.error("Unclosed brace '{'");
         } else {
-            errorMarker.drop();
+            bodyMarker.done(UiTypes.COMPONENT_BODY);
         }
     }
 
     private void parsePropertyValue(PsiBuilder builder) {
-        PsiBuilder.Marker errorMarker = builder.mark();
-        builder.advanceLexer(); // consume (
         PsiBuilder.Marker valueMarker = builder.mark();
+        builder.advanceLexer(); // consume (
         boolean matched = parseBlockContent(builder, UiTypes.RPAREN);
-        valueMarker.done(UiTypes.PROPERTY_VALUE);
 
         if (!matched) {
-            errorMarker.error("Unclosed parenthesis '('");
+            valueMarker.error("Unclosed parenthesis '('");
         } else {
-            errorMarker.drop();
+            valueMarker.done(UiTypes.PROPERTY_VALUE);
         }
     }
 
     private void parseArrayLiteral(PsiBuilder builder) {
-        PsiBuilder.Marker errorMarker = builder.mark();
-        builder.advanceLexer(); // consume [
         PsiBuilder.Marker arrayMarker = builder.mark();
+        builder.advanceLexer(); // consume [
         boolean matched = parseBlockContent(builder, UiTypes.RBRACKET);
-        arrayMarker.done(UiTypes.ARRAY_LITERAL);
 
         if (!matched) {
-            errorMarker.error("Unclosed bracket '['");
+            arrayMarker.error("Unclosed bracket '['");
         } else {
-            errorMarker.drop();
+            arrayMarker.done(UiTypes.ARRAY_LITERAL);
         }
     }
 
