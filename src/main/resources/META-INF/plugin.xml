@@ -1,8 +1,24 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>org.jetbrains.plugins.template</id>
-    <name>UI File Support</name>
-    <vendor>JetBrains</vendor>
+    <id>fr.azerks.HytaleUI</id>
+    <name>UI File Support for Hytale</name>
+    <vendor>Léo Gallois</vendor>
+
+    <description><![CDATA[
+        <p>Provides comprehensive support for Hytale UI (.ui) files in IntelliJ-based IDEs.</p>
+        <h3>Features:</h3>
+        <ul>
+            <li><b>Syntax Highlighting:</b> Color-coded keywords, properties, strings, numbers, and comments</li>
+            <li><b>Code Completion:</b> Auto-complete for UI components, properties, and values</li>
+            <li><b>Code Formatting:</b> Automatic indentation and code formatting</li>
+            <li><b>Error Detection:</b> Real-time validation and error highlighting (Work in progress)</li>
+            <li><b>Auto-closing:</b> Automatic closing of brackets, braces, and quotes</li>
+        </ul>
+        <h3>Coming Soon:</h3>
+        <ul>
+            <li><b>Reference Resolution:</b> Navigate between imports and variable declarations</li>
+        </ul>
+    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 
