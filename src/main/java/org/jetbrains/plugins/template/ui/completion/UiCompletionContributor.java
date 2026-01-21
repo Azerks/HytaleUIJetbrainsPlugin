@@ -142,17 +142,17 @@ public class UiCompletionContributor extends CompletionContributor {
     }
 
     private boolean shouldProvideComponentCompletion(PsiElement position) {
-        PsiElement prev = position.getPrevSibling();
+        PsiElement prev = position.getPrevSibling() != null ? position.getPrevSibling() : position.getParent();
         while (prev != null && prev.getText().trim().isEmpty()) {
             prev = prev.getPrevSibling();
         }
         if (prev != null) {
             PsiElement beforeColon = prev.getPrevSibling();
-            while (beforeColon != null && beforeColon.getText().trim().isEmpty()) {
+            while (beforeColon != null && beforeColon.getNode().getElementType() != UiTypes.COMPONENT) {
                 beforeColon = beforeColon.getPrevSibling();
             }
 
-            if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.IDENTIFIER && beforeColon.getText().equals("Group")) {
+            if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.COMPONENT && beforeColon.getText().equals("Group")) {
                 return position.getParent().getNode().getElementType() == UiTypes.COMPONENT_BODY;
             }
         }
