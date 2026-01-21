@@ -1,7 +1,6 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-## [1.0.0]
-
+[Unreleased]
 ### Added
 
 - Syntax Highlighting
@@ -9,5 +8,3 @@
 - Code Formatting
 - Auto-closing
 - Basic Error Detection
-
-[1.0.0]: 
