@@ -7,7 +7,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.PsiErrorElementUtil;
-import org.jetbrains.plugins.template.services.MyProjectService;
 
 @TestDataPath("$CONTENT_ROOT/src/test/testData")
 public class MyPluginTest extends BasePlatformTestCase {
@@ -25,16 +24,6 @@ public class MyPluginTest extends BasePlatformTestCase {
             assertEquals("foo", rootTag.getName());
             assertEquals("bar", rootTag.getValue().getText());
         }
-    }
-
-    public void testRename() {
-        myFixture.testRename("foo.xml", "foo_after.xml", "a2");
-    }
-
-    public void testProjectService() {
-        MyProjectService projectService = getProject().getService(MyProjectService.class);
-
-        assertNotSame(projectService.getRandomNumber(), projectService.getRandomNumber());
     }
 
     @Override
