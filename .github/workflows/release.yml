@@ -5,7 +5,7 @@
 name: Release
 on:
   release:
-    types: [prereleased, released]
+    types: [ prereleased, released ]
 
 jobs:
 
@@ -43,6 +43,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           cache-read-only: true
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       # Update the Unreleased section with the current release note
       - name: Patch Changelog
