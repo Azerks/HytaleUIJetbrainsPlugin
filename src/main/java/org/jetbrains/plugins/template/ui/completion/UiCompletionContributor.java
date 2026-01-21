@@ -142,26 +142,33 @@ public class UiCompletionContributor extends CompletionContributor {
     }
 
     private boolean shouldProvideComponentCompletion(PsiElement position) {
-        PsiElement prev = position.getPrevSibling() != null ? position.getPrevSibling() : position.getParent();
-        while (prev != null && prev.getText().trim().isEmpty()) {
-            prev = prev.getPrevSibling();
-        }
-        if (prev != null) {
-            PsiElement beforeColon = prev.getPrevSibling();
-            while (beforeColon != null && beforeColon.getNode().getElementType() != UiTypes.COMPONENT) {
-                beforeColon = beforeColon.getPrevSibling();
-            }
 
-            if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.COMPONENT && beforeColon.getText().equals("Group")) {
-                return position.getParent().getNode().getElementType() == UiTypes.COMPONENT_BODY;
-            }
+        boolean hasLineTerminator = false;
+        PsiElement beforeColon = position.getPrevSibling();
+        while (beforeColon != null && beforeColon.getNode().getElementType() != UiTypes.COMPONENT) {
+            if (beforeColon.getNode().getText().equals(";")) hasLineTerminator = true;
+            if (beforeColon.getNode().getText().equals(":") && !hasLineTerminator) return false;
+
+            beforeColon = beforeColon.getPrevSibling();
+            if (beforeColon == null) beforeColon = position.getParent();
+        }
+
+        if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.COMPONENT && beforeColon.getText().equals("Group")) {
+            return position.getParent().getNode().getElementType() == UiTypes.COMPONENT_BODY;
         }
 
         return position.getParent() == null;
     }
 
     private boolean shouldProvidePropertyCompletion(PsiElement position) {
-        // Check if we're inside a component body (between braces)
+        boolean hasLineTerminator = false;
+        PsiElement beforeColon = position.getPrevSibling();
+        while (beforeColon != null && beforeColon.getNode().getElementType() != UiTypes.PROPERTY_VALUE) {
+            if (beforeColon.getNode().getText().equals(";")) hasLineTerminator = true;
+            if (beforeColon.getNode().getText().equals(":") && !hasLineTerminator) return false;
+            beforeColon = beforeColon.getPrevSibling();
+        }
+
         PsiElement parent = position.getParent();
         if (parent != null && parent.getNode() != null) {
             return parent.getNode().getElementType() == UiTypes.COMPONENT_BODY;
@@ -170,6 +177,8 @@ public class UiCompletionContributor extends CompletionContributor {
     }
 
     private boolean isDirectlyInsidePropertyValue(PsiElement position, String propertyName) {
+
+
         // Check if we're inside a PROPERTY_VALUE that belongs to the specific property
         PsiElement current = position.getParent();
 
@@ -177,6 +186,13 @@ public class UiCompletionContributor extends CompletionContributor {
         while (current != null) {
             if (current.getNode() != null &&
                     current.getNode().getElementType() == UiTypes.PROPERTY_VALUE) {
+
+                PsiElement p = position.getPrevSibling();
+                while (p != null) {
+                    if (p.getNode().getText().equals(",")) break;
+                    if (p.getNode().getElementType() == UiTypes.PROPERTY) return false;
+                    p = p.getPrevSibling();
+                }
 
                 // Found a PROPERTY_VALUE, now check if it's preceded by the property name
                 PsiElement prev = current.getPrevSibling();
