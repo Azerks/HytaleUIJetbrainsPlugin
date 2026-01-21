@@ -32,7 +32,23 @@ STRING=\"([^\"\\\r\n]|\\.)*\"
     {LINE_COMMENT}              { return UiTypes.COMMENT; }
     {BLOCK_COMMENT}             { return UiTypes.COMMENT; }
 
-    // Keywords
+    // Component types
+    "Group"                     { return UiTypes.COMPONENT; }
+    "Label"                     { return UiTypes.COMPONENT; }
+    "Button"                    { return UiTypes.COMPONENT; }
+    "TextButton"                { return UiTypes.COMPONENT; }
+    "CheckBox"                  { return UiTypes.COMPONENT; }
+    "TextField"                 { return UiTypes.COMPONENT; }
+    "NumberField"               { return UiTypes.COMPONENT; }
+    "DropdownBox"               { return UiTypes.COMPONENT; }
+    "ColorPickerDropdownBox"    { return UiTypes.COMPONENT; }
+    "Sprite"                    { return UiTypes.COMPONENT; }
+    "CompactTextField"          { return UiTypes.COMPONENT; }
+    "BackButton"                { return UiTypes.COMPONENT; }
+    "FileDropdownBox"           { return UiTypes.COMPONENT; }
+    "Panel"                     { return UiTypes.COMPONENT; }
+
+    // Property keywords
     "Anchor"                    { return UiTypes.KEYWORD; }
     "Style"                     { return UiTypes.KEYWORD; }
     "LayoutMode"                { return UiTypes.KEYWORD; }

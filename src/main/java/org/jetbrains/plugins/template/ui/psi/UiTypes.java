@@ -7,6 +7,7 @@ public interface UiTypes {
 
     IElementType COMMENT = new UiTokenType("COMMENT");
     IElementType KEYWORD = new UiTokenType("KEYWORD");
+    IElementType COMPONENT = new UiTokenType("COMPONENT");
     IElementType PROPERTY = new UiTokenType("PROPERTY");
     IElementType VALUE = new UiTokenType("VALUE");
     IElementType BOOLEAN = new UiTokenType("BOOLEAN");

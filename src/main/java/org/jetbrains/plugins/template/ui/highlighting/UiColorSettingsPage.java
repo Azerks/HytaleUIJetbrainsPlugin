@@ -17,6 +17,7 @@ public class UiColorSettingsPage implements ColorSettingsPage {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
             new AttributesDescriptor("Comment", UiSyntaxHighlighter.COMMENT),
             new AttributesDescriptor("Keyword", UiSyntaxHighlighter.KEYWORD),
+            new AttributesDescriptor("Component", UiSyntaxHighlighter.COMPONENT),
             new AttributesDescriptor("Property", UiSyntaxHighlighter.PROPERTY),
             new AttributesDescriptor("Value", UiSyntaxHighlighter.VALUE),
             new AttributesDescriptor("Boolean", UiSyntaxHighlighter.BOOLEAN),

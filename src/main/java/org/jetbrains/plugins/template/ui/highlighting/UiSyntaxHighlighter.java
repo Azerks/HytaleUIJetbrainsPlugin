@@ -20,6 +20,9 @@ public class UiSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey KEYWORD =
             createTextAttributesKey("UI_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
 
+    public static final TextAttributesKey COMPONENT =
+            createTextAttributesKey("UI_COMPONENT", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+
     public static final TextAttributesKey PROPERTY =
             createTextAttributesKey("UI_PROPERTY", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 
@@ -61,6 +64,7 @@ public class UiSyntaxHighlighter extends SyntaxHighlighterBase {
 
     private static final TextAttributesKey[] COMMENT_KEYS = new TextAttributesKey[]{COMMENT};
     private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};
+    private static final TextAttributesKey[] COMPONENT_KEYS = new TextAttributesKey[]{COMPONENT};
     private static final TextAttributesKey[] PROPERTY_KEYS = new TextAttributesKey[]{PROPERTY};
     private static final TextAttributesKey[] VALUE_KEYS = new TextAttributesKey[]{VALUE};
     private static final TextAttributesKey[] BOOLEAN_KEYS = new TextAttributesKey[]{BOOLEAN};
@@ -89,6 +93,8 @@ public class UiSyntaxHighlighter extends SyntaxHighlighterBase {
             return COMMENT_KEYS;
         } else if (tokenType.equals(UiTypes.KEYWORD)) {
             return KEYWORD_KEYS;
+        } else if (tokenType.equals(UiTypes.COMPONENT)) {
+            return COMPONENT_KEYS;
         } else if (tokenType.equals(UiTypes.PROPERTY)) {
             return PROPERTY_KEYS;
         } else if (tokenType.equals(UiTypes.VALUE)) {
