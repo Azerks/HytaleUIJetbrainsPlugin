@@ -15,3 +15,5 @@
 - Code Formatting
 - Auto-closing
 - Basic Error Detection
+
+[1.0.0]: https://github.com/Azerks/HytaleUIJetbrainsPlugin/tree/1.0.0
