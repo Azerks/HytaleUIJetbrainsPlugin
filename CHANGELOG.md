@@ -1,6 +1,13 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
 ## [Unreleased]
+### Fixed
+- Autocompletion performance issues
+
+### Changed
+- Autocompletion should return better result
+
+## [1.0.0] - 2026-01-22
 ### Added
 
 - Syntax Highlighting
