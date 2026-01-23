@@ -41,7 +41,6 @@ public class UiBlock extends AbstractBlock {
             }
             child = child.getTreeNext();
         }
-        System.out.println(blocks);
         return blocks;
     }
 

@@ -55,7 +55,14 @@ public class UiParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public PsiElement createElement(ASTNode node) {
+        // For composite elements created by the parser
         return new UiPsiElement(node);
+    }
+
+    @NotNull
+    @Override
+    public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
+        return SpaceRequirements.MAY;
     }
 
     @NotNull

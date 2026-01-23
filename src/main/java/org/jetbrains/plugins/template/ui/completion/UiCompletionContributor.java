@@ -111,7 +111,7 @@ public class UiCompletionContributor extends CompletionContributor {
 
         boolean hasLineTerminator = false;
         PsiElement beforeColon = position.getPrevSibling();
-        while (beforeColon != null && beforeColon.getNode().getElementType() != UiTypes.COMPONENT) {
+        while (beforeColon != null && beforeColon.getNode().getElementType() != UiTypes.COMPONENT_USAGE) {
             if (beforeColon.getNode().getText().equals(";")) hasLineTerminator = true;
             if (beforeColon.getNode().getText().equals(":") && !hasLineTerminator) return false;
 
@@ -119,7 +119,7 @@ public class UiCompletionContributor extends CompletionContributor {
             if (beforeColon == null) beforeColon = position.getParent();
         }
 
-        if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.COMPONENT && beforeColon.getText().equals("Group")) {
+        if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.COMPONENT_USAGE && beforeColon.getText().equals("Group")) {
             return position.getParent().getNode().getElementType() == UiTypes.COMPONENT_BODY;
         }
 
@@ -173,7 +173,7 @@ public class UiCompletionContributor extends CompletionContributor {
                         beforeColon = beforeColon.getPrevSibling();
                     }
 
-                    if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.KEYWORD)
+                    if (beforeColon != null && beforeColon.getNode() != null && beforeColon.getNode().getElementType() == UiTypes.IDENTIFIER)
                         return beforeColon.getText();
                 }
 

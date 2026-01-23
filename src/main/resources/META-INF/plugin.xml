@@ -60,8 +60,7 @@
                    implementationClass="org.jetbrains.plugins.template.ui.annotator.UiAnnotator"/>
 
         <!-- Reference Resolution (imports and variables) -->
-        <psi.referenceContributor language="UI"
-                                  implementation="org.jetbrains.plugins.template.ui.references.UiReferenceContributor"/>
+        <psi.referenceContributor implementation="org.jetbrains.plugins.template.ui.references.UiReferenceContributor"/>
 
         <!-- Auto-closing brackets and quotes -->
         <typedHandler implementation="org.jetbrains.plugins.template.ui.typing.UiTypedHandler"/>

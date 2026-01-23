@@ -24,6 +24,7 @@ IDENTIFIER=[a-zA-Z_][a-zA-Z0-9_]*
 NUMBER=[0-9]+(\.[0-9]+)?
 HEX_COLOR=#[0-9a-fA-F]{6}(\([0-9.]+\))?
 STRING=\"([^\"\\\r\n]|\\.)*\"
+MATH=[+\-*\/%]
 
 %%
 
@@ -33,53 +34,53 @@ STRING=\"([^\"\\\r\n]|\\.)*\"
     {BLOCK_COMMENT}             { return UiTypes.COMMENT; }
 
     // Component types
-    "Group"                     { return UiTypes.COMPONENT; }
-    "Label"                     { return UiTypes.COMPONENT; }
-    "Button"                    { return UiTypes.COMPONENT; }
-    "TextButton"                { return UiTypes.COMPONENT; }
-    "CheckBox"                  { return UiTypes.COMPONENT; }
-    "TextField"                 { return UiTypes.COMPONENT; }
-    "NumberField"               { return UiTypes.COMPONENT; }
-    "DropdownBox"               { return UiTypes.COMPONENT; }
-    "ColorPickerDropdownBox"    { return UiTypes.COMPONENT; }
-    "Sprite"                    { return UiTypes.COMPONENT; }
-    "CompactTextField"          { return UiTypes.COMPONENT; }
-    "BackButton"                { return UiTypes.COMPONENT; }
-    "FileDropdownBox"           { return UiTypes.COMPONENT; }
-    "Panel"                     { return UiTypes.COMPONENT; }
+    "Group"                     { return UiTypes.IDENTIFIER; }
+    "Label"                     { return UiTypes.IDENTIFIER; }
+    "Button"                    { return UiTypes.IDENTIFIER; }
+    "TextButton"                { return UiTypes.IDENTIFIER; }
+    "CheckBox"                  { return UiTypes.IDENTIFIER; }
+    "TextField"                 { return UiTypes.IDENTIFIER; }
+    "NumberField"               { return UiTypes.IDENTIFIER; }
+    "DropdownBox"               { return UiTypes.IDENTIFIER; }
+    "ColorPickerDropdownBox"    { return UiTypes.IDENTIFIER; }
+    "Sprite"                    { return UiTypes.IDENTIFIER; }
+    "CompactTextField"          { return UiTypes.IDENTIFIER; }
+    "BackButton"                { return UiTypes.IDENTIFIER; }
+    "FileDropdownBox"           { return UiTypes.IDENTIFIER; }
+    "Panel"                     { return UiTypes.IDENTIFIER; }
 
     // Property keywords
-    "Anchor"                    { return UiTypes.KEYWORD; }
-    "Style"                     { return UiTypes.KEYWORD; }
-    "LayoutMode"                { return UiTypes.KEYWORD; }
-    "Padding"                   { return UiTypes.KEYWORD; }
-    "Background"                { return UiTypes.KEYWORD; }
-    "Text"                      { return UiTypes.KEYWORD; }
-    "FlexWeight"                { return UiTypes.KEYWORD; }
-    "MaxLength"                 { return UiTypes.KEYWORD; }
-    "ScrollbarStyle"            { return UiTypes.KEYWORD; }
-    "TexturePath"               { return UiTypes.KEYWORD; }
-    "Border"                    { return UiTypes.KEYWORD; }
+    "Anchor"                    { return UiTypes.IDENTIFIER; }
+    "Style"                     { return UiTypes.IDENTIFIER; }
+    "LayoutMode"                { return UiTypes.IDENTIFIER; }
+    "Padding"                   { return UiTypes.IDENTIFIER; }
+    "Background"                { return UiTypes.IDENTIFIER; }
+    "Text"                      { return UiTypes.IDENTIFIER; }
+    "FlexWeight"                { return UiTypes.IDENTIFIER; }
+    "MaxLength"                 { return UiTypes.IDENTIFIER; }
+    "ScrollbarStyle"            { return UiTypes.IDENTIFIER; }
+    "TexturePath"               { return UiTypes.IDENTIFIER; }
+    "Border"                    { return UiTypes.IDENTIFIER; }
 
     // Property keywords
-    "Left"                      { return UiTypes.PROPERTY; }
-    "Right"                     { return UiTypes.PROPERTY; }
-    "Top"                       { return UiTypes.PROPERTY; }
-    "Bottom"                    { return UiTypes.PROPERTY; }
-    "Width"                     { return UiTypes.PROPERTY; }
-    "Height"                    { return UiTypes.PROPERTY; }
-    "Full"                      { return UiTypes.PROPERTY; }
-    "Center"                    { return UiTypes.PROPERTY; }
-    "FontSize"                  { return UiTypes.PROPERTY; }
-    "TextColor"                 { return UiTypes.PROPERTY; }
-    "RenderBold"                { return UiTypes.PROPERTY; }
-    "VerticalAlignment"         { return UiTypes.PROPERTY; }
-    "HorizontalAlignment"       { return UiTypes.PROPERTY; }
-    "Alignment"                 { return UiTypes.PROPERTY; }
-    "Wrap"                      { return UiTypes.PROPERTY; }
+    "Left"                      { return UiTypes.IDENTIFIER; }
+    "Right"                     { return UiTypes.IDENTIFIER; }
+    "Top"                       { return UiTypes.IDENTIFIER; }
+    "Bottom"                    { return UiTypes.IDENTIFIER; }
+    "Width"                     { return UiTypes.IDENTIFIER; }
+    "Height"                    { return UiTypes.IDENTIFIER; }
+    "Full"                      { return UiTypes.IDENTIFIER; }
+    "Center"                    { return UiTypes.IDENTIFIER; }
+    "FontSize"                  { return UiTypes.IDENTIFIER; }
+    "TextColor"                 { return UiTypes.IDENTIFIER; }
+    "RenderBold"                { return UiTypes.IDENTIFIER; }
+    "VerticalAlignment"         { return UiTypes.IDENTIFIER; }
+    "HorizontalAlignment"       { return UiTypes.IDENTIFIER; }
+    "Alignment"                 { return UiTypes.IDENTIFIER; }
+    "Wrap"                      { return UiTypes.IDENTIFIER; }
 
     // Layout modes
-    "TopScrolling"              { return UiTypes.VALUE; }
+    "TopScrolling"              { return UiTypes.IDENTIFIER; }
 
     // Boolean values
     "true"                      { return UiTypes.BOOLEAN; }
@@ -103,6 +104,7 @@ STRING=\"([^\"\\\r\n]|\\.)*\"
     "..."                       { return UiTypes.SPREAD; }
 
     {HEX_COLOR}                 { return UiTypes.COLOR; }
+    {MATH}                      { return UiTypes.MATH_OPERATOR; }
     {STRING}                    { return UiTypes.STRING; }
     {NUMBER}                    { return UiTypes.NUMBER; }
     {IDENTIFIER}                { return UiTypes.IDENTIFIER; }

@@ -1,0 +1,233 @@
+{
+  parserClass="org.jetbrains.plugins.template.ui.parser.UiParser"
+  parserUtilClass="org.jetbrains.plugins.template.ui.parser.UiParserUtil"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Ui"
+  psiImplClassSuffix="Impl"
+  psiPackage="org.jetbrains.plugins.template.ui.psi"
+  psiImplPackage="org.jetbrains.plugins.template.ui.psi.impl"
+
+  elementTypeHolderClass="org.jetbrains.plugins.template.ui.psi.UiTypes"
+  elementTypeClass="org.jetbrains.plugins.template.ui.psi.UiElementType"
+  tokenTypeClass="org.jetbrains.plugins.template.ui.psi.UiTokenType"
+
+  psiImplUtilClass="org.jetbrains.plugins.template.ui.psi.UiPsiImplUtil"
+
+  tokens = [
+    // Comments and whitespace
+    COMMENT='regexp://[^\r\n]*'
+    WHITE_SPACE='regexp:\s+'
+
+    // Literals
+    IDENTIFIER='regexp:[A-Za-z_][A-Za-z0-9_]*'
+    NUMBER='regexp:-?[0-9]+(\.[0-9]+)?'
+    STRING='regexp:"([^"\\]|\\.)*"|' + "'([^'\\]|\\.)*'"
+    COLOR='regexp:#[0-9a-fA-F]{3,8}(\([0-9.]+\))?'
+    BOOLEAN='regexp:true|false'
+
+    // Operators and delimiters
+    EQUALS='='
+    COLON=':'
+    SEMICOLON=';'
+    COMMA=','
+    DOT='.'
+    SPREAD='...'
+    AT='@'
+    DOLLAR='$'
+    HASH='#'
+    MATH_OPERATOR='regexp[+\-*\/%]'
+
+    // Brackets
+    LBRACE='{'
+    RBRACE='}'
+    LPAREN='('
+    RPAREN=')'
+    LBRACKET='['
+    RBRACKET=']'
+  ]
+}
+
+// Root rule
+uiFile ::= statement*
+
+// Top-level statements
+statement ::= atDeclaration
+            | importStatement
+            | componentUsage
+
+// Import statement: $C = "Common.ui";
+importStatement ::= variable EQUALS STRING SEMICOLON {
+  pin=2
+  methods=[
+    getImportedFile
+  ]
+}
+
+// @ declarations: handles both simple values and component definitions
+// @MaterialSlotSize = 46; OR @InputLabel = Label { ... };
+// We use separate rules but put componentDefinition first since it's more specific
+private atDeclaration ::= componentDefinition | variableDeclaration
+
+// Component definition: @InputLabel = Label { ... };
+// The key is that componentUsage MUST have a body (LBRACE)
+componentDefinition ::= AT IDENTIFIER EQUALS componentReference componentBody SEMICOLON {
+  implements="com.intellij.psi.PsiNameIdentifierOwner"
+  methods=[
+    getName
+    setName
+    getNameIdentifier
+  ]
+}
+
+// Variable declaration: @MaterialSlotSize = 46;
+variableDeclaration ::= AT IDENTIFIER EQUALS value SEMICOLON {
+  pin=3
+  implements="com.intellij.psi.PsiNameIdentifierOwner"
+  methods=[
+    getName
+    setName
+    getNameIdentifier
+  ]
+}
+
+// Component usage (standalone or within other components)
+componentUsage ::= (componentReference idDeclaration? | idDeclaration) componentBody {
+  pin=1
+}
+
+// Component reference: can be qualified like $C.@TextField or simple like Label or @InputLabel
+componentReference ::= qualifiedComponentRef | atComponentRef | simpleComponentRef {
+  methods=[
+    getReferenceName
+    getQualifier
+  ]
+}
+
+qualifiedComponentRef ::= variable DOT AT IDENTIFIER {
+  pin=3
+  methods=[
+    getComponentName
+  ]
+}
+
+atComponentRef ::= AT IDENTIFIER {
+  pin=1
+  methods=[
+    getComponentName
+  ]
+}
+
+simpleComponentRef ::= IDENTIFIER {
+  methods=[
+    getComponentName
+  ]
+}
+
+// Variable reference: $C
+variable ::= DOLLAR IDENTIFIER {
+  pin=1
+  implements="com.intellij.psi.PsiNamedElement"
+  methods=[
+    getName
+    setName
+    getReference
+  ]
+}
+
+// Component body: { ... }
+componentBody ::= LBRACE componentBodyContent* RBRACE {
+  pin=1
+}
+
+componentBodyContent ::= property | atPropertyOverride
+                       | componentUsage
+
+// ID declaration: #QuestNameField
+idDeclaration ::= HASH IDENTIFIER {
+  pin=1
+  implements="com.intellij.psi.PsiNameIdentifierOwner"
+  methods=[
+    getName
+    setName
+    getNameIdentifier
+  ]
+}
+
+// Property: Text: "Hello"; or Anchor: (Left: 5);
+// Top-level property with semicolon
+
+property ::= IDENTIFIER COLON value SEMICOLON {
+  pin=2
+  methods=[
+    getPropertyName
+  ]
+}
+
+// Anchor(Left: 1);
+functionLikeStyle ::= IDENTIFIER propertyValue {
+    methods=[
+        getPropertyName
+    ]
+}
+
+// @Anchor = (Left: 1);
+// @Anchor = Anchor(Left: 1);
+atPropertyOverride ::= AT IDENTIFIER EQUALS value SEMICOLON {
+  pin=3
+  methods=[
+    getPropertyName
+  ]
+}
+
+// Property without semicolon (for use inside property lists)
+private propertyItem ::= IDENTIFIER COLON value {
+  pin=2
+}
+
+// Values
+value ::= propertyValue
+        | arrayLiteral
+        | spreadValue
+        | qualifiedComponentRef | atComponentRef
+        | functionLikeStyle
+        | mathPropertyList
+        | i18nProperty
+        | literalValue
+
+mathPropertyList ::= MATH_OPERATOR NUMBER | NUMBER (MATH_OPERATOR MATH_OPERATOR? NUMBER)*
+
+i18nProperty ::= MATH_OPERATOR IDENTIFIER (DOT IDENTIFIER)*
+
+propertyValue ::= LPAREN propertyList RPAREN {
+  pin=1
+}
+
+// Property list can contain propertyItems (without semicolons) or spread values
+propertyList ::= propertyListElement (COMMA propertyListElement)* {
+  recoverWhile=property_recover
+}
+
+private propertyListElement ::= spreadValue | propertyItem
+
+private property_recover ::= !(RPAREN | RBRACE | RBRACKET)
+
+arrayLiteral ::= LBRACKET valueList? RBRACKET {
+  pin=1
+}
+
+valueList ::= value (COMMA value)* {
+  recoverWhile=value_recover
+}
+
+private value_recover ::= !(RBRACKET | RPAREN | RBRACE | COMMA)
+
+// Spread value: ...$C.@DefaultStyle
+// TODO Anchor: (...@Anchor, Height: @DefaultButtonHeight);
+spreadValue ::= SPREAD componentReference {
+  pin=1
+}
+
+// Literal values
+literalValue ::= STRING | NUMBER | COLOR | BOOLEAN | IDENTIFIER

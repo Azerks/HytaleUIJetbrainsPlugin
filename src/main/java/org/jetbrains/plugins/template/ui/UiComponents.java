@@ -4,13 +4,16 @@ import java.util.*;
 
 public class UiComponents {
 
-    // Component types
+    // Component types (built-in components)
     public static final Set<String> COMPONENT_TYPES = Set.of(
             "Group", "Label", "Button", "TextButton", "TextField", "NumberField",
             "DropdownBox", "CheckBox", "Sprite", "BackButton", "CompactTextField",
             "Slider", "FloatSlider", "ColorPicker", "ColorPickerDropdownBox",
             "FileDropdownBox", "TabNavigation", "ItemGrid"
     );
+
+    // Alias for built-in components
+    public static final Set<String> BUILT_IN_COMPONENTS = COMPONENT_TYPES;
 
     // Common properties for all components
     public static final Set<String> COMMON_PROPERTIES = Set.of(
@@ -205,5 +208,9 @@ public class UiComponents {
 
     public static boolean isFunctionType(String name) {
         return FUNCTION_TYPES.contains(name);
+    }
+
+    public static boolean isBuiltInComponent(String componentName) {
+        return BUILT_IN_COMPONENTS.contains(componentName);
     }
 }
